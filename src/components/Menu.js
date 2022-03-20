@@ -16,11 +16,11 @@ export default function Menu({setValue}) {
     <FormControl className={classes.formControl}>
         <InputLabel>Crime Type</InputLabel>
         <Select onChange={handleChange}>
-            <MenuItem value = "Assult">Assult</MenuItem>
+            <MenuItem value = "Assault">Assault</MenuItem>
             <MenuItem value = "Break and Enter">Break and Enter</MenuItem>
             <MenuItem value = "Homicide">Homicide</MenuItem>
             <MenuItem value = "Robbery">Robbery</MenuItem>
-            <MenuItem value = "Sexual Assults">Sexual Assults</MenuItem>
+            <MenuItem value = "Sexual Assaults">Sexual Assaults</MenuItem>
             <MenuItem value = "Theft From Vehicle">Theft From Vehicle</MenuItem>
             <MenuItem value = "Theft Of Vehicle">Theft Of Vehicle</MenuItem>
             <MenuItem value = "Theft Over $5000">Theft Over $5000</MenuItem>

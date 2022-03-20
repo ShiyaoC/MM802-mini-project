@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import DatePicker from "./components/DatePicker"
 import Menu from './components/Menu'
-import Grid from '@material-ui/core/Grid';
 import TopN from './components/TopN'
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import { GoogleMap, withScriptjs, withGoogleMap} from "react-google-maps";
+import axios from 'axios'
 import * as d3 from "d3";
 // d3 bar chart: https://www.youtube.com/watch?v=hOzKr8H_438
 
@@ -19,9 +22,27 @@ function App() {
   const [selectedEndDate, setSelectedEndDate] = React.useState(new Date());
   const [value,setValue] = useState("");
   const [topN,setTopN] = useState("");
+  const [queryResult, setQueryResult] = useState({});
 
+  const [testData, setTestData] = useState([{}]);
+
+  // this is an example data for bar chart
   const [data] = useState([200,20,50,240,120,250,300]);
   const svgRef = useRef();
+
+  const handleClick = async () =>{
+    let res = await axios.post('http://localhost:3003/api/', {
+      startDate: selectedStartDate,
+      endDate: selectedEndDate,
+      type: value,
+      topn: parseInt(topN)
+    })
+    // console.log(res)
+    setQueryResult(res)
+    console.log(queryResult)
+
+  }
+
 
   useEffect(() => {
     // setup svg container
@@ -33,7 +54,6 @@ function App() {
       .style('overflow', 'visible')
       .style('margin-top','75px')
       .style('margin-left','75px');
-
 
     // set scaling
     const xScale = d3.scaleBand()
@@ -65,11 +85,31 @@ function App() {
         .attr('height', val => h - yScale(val));
   } ,[data]);
 
+  // send data from backend to frontend
+  useEffect(()=>{
+    axios.get('http://localhost:3003/members').then(response => {
+      console.log("SUCCESS", response)
+      setTestData(response)
+    }).catch(error => {
+      console.log(error)
+    })
+
+  }, [])
+
   return (
     <div className="App">
       <h1>
         MM802 mini project
       </h1>
+      {/* {(typeof testData.data.members === 'undefined') ? (
+        <p>loading...</p>
+      ) : (
+        testData.data.members.map((member,i) => (
+          <p key={i}>{member}</p>
+        ))
+      )}  */}
+
+
       <Grid container justifyContent="space-around">
         <DatePicker 
           setSelectedDate={setSelectedStartDate} 
@@ -81,10 +121,25 @@ function App() {
           label = {"End Date"}/>
         <Menu setValue={setValue}/>
         <TopN setTopN={setTopN}/>
-      </Grid>
-      <p></p>
 
-      <div style = {{width:'100vw',height:'100vh',}}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={handleClick}>
+          Search
+        </Button>
+      </Grid>
+
+      {/* {(typeof queryResult.data.Month === 'undefined') ? 
+        (<p>
+          no data
+        </p>):
+        (
+        <p>showing data</p>
+        // <svg ref = {svgRef}/>
+      )} */}
+
+      <div style = {{width:'100vw',height:'100vh',marginTop: 40}} >
         <Grid >
           <WrappedMap 
               googleMapURL = {'https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places'} 
@@ -92,13 +147,11 @@ function App() {
               containerElement={<div style={{ height: `400px` }} />}
               mapElement={<div style={{ height: `100%` }} />}
             />
-          <svg ref = {svgRef}/>
         </Grid>
+
       </div>
-      
-      
 
-
+    
 
 
 {/*       
