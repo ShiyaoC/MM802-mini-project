@@ -144,6 +144,8 @@ function App() {
       .style('overflow', 'visible')
       .style('margin-top','75px')
       .style('margin-left','75px');
+    
+    svg.selectAll("*").remove()
 
     svg.append("text")
       .attr("transform", "translate(100,0)")
